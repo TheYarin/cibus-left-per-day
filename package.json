@@ -1,0 +1,13 @@
+{
+  "name": "cibus-left-per-day",
+  "version": "1.0.0",
+  "main": "main.mjs",
+  "author": "Yarin",
+  "license": "GPL-3.0",
+  "dependencies": {
+    "jsdom": "^17.0.0",
+    "moment": "^2.29.1",
+    "node-fetch": "^2.6.1",
+    "yargs": "^17.1.1"
+  }
+}
