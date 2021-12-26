@@ -47,6 +47,7 @@ async function getCibusLoginCookies(username, company, password) {
     const raw = response.headers.raw()["set-cookie"];
     return raw
       .map((entry) => {
+        // This threw an error "Cannot read property map of undefined"
         const parts = entry.split(";");
         const cookiePart = parts[0];
         return cookiePart;
@@ -81,6 +82,8 @@ async function getAmountLeftInCibus(cibusLoginCookies) {
 
   const body = await fetchBalanceLeftInCibusResponse.text();
   const budgetLeft = Number.parseFloat(body);
+
+  if (budgetLeft === NaN) throw new Error("Failed to retrieve amount left in Cibus. Response body was: " + body);
 
   return budgetLeft;
 }
@@ -212,7 +215,7 @@ while (true) {
 
     console.log(`\n\nTime of last check: ${timeOfCheck.format("HH:mm")}`);
   } catch (error) {
-    if (error.code !== "ENOTFOUND" && error.code !== "ETIMEDOUT") throw error;
+    if (!["ENOTFOUND", "ETIMEDOUT", "ENETUNREACH", "EADDRNOTAVAIL", "ECONNRESET"].includes(error.code)) throw error;
   }
 
   let minutesBetweenChecks;
@@ -234,5 +237,4 @@ while (true) {
 TODO:
 - handle wrong password
 - wrap nicely for npx
-- figure out why the number is wrong sometimes
 */
