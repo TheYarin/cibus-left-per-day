@@ -213,7 +213,7 @@ while (true) {
 
     if (!shouldWatch) process.exit(0);
 
-    console.log(`\n\nTime of last check: ${timeOfCheck.format("HH:mm")}`);
+    console.log(`\n\nTime of last check: ${timeOfCheck.format("HH:mm (ddd, DD/MM/YYYY)")}`);
   } catch (error) {
     if (!["ENOTFOUND", "ETIMEDOUT", "ENETUNREACH", "EADDRNOTAVAIL", "ECONNRESET"].includes(error.code)) throw error;
   }
