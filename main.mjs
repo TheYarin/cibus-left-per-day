@@ -139,7 +139,20 @@ async function getNumberOfWorkDaysLeft(cibusLoginCookies) {
    * @returns
    */
   async function getHolidaysOfMonth(month, year) {
-    const hebrewsToExclude = ["חנוכה", "חול המועד", "חוה״מ", "שמחת תורה", "סוכות ב׳", "סוכות יום ב", "יום העלייה"];
+    const hebrewsToExclude = [
+      "חנוכה",
+      "חול המועד",
+      "חוה״מ",
+      "שמחת תורה",
+      "סוכות ב׳",
+      "סוכות יום ב",
+      "יום העלייה",
+      "יום השואה",
+      "יום ירושלים",
+      "סיגד",
+      "תשעה באב",
+      "יום העליה",
+    ];
 
     const response = await fetch(
       `https://www.hebcal.com/hebcal?v=1&cfg=json&maj=on&min=off&mod=on&nx=off&year=${year}&month=${month}&ss=off&mf=off&c=off&geo=none&s=off`
@@ -163,7 +176,7 @@ async function getNumberOfWorkDaysLeft(cibusLoginCookies) {
     workDaysLeft++;
   }
 
-  return workDaysLeft;
+  return { workDaysLeft, includingToday: !shouldStartCountingFromTomorrow };
 }
 
 function numberToMoneyString(amountOfMoney) {
@@ -195,7 +208,7 @@ while (true) {
     const cibusLoginCookies = await getCibusLoginCookies(username, company, password);
     const timeOfCheck = moment();
     const totalAmountLeftInCibus = await getAmountLeftInCibus(cibusLoginCookies);
-    const numberOfWorkDaysLeft = await getNumberOfWorkDaysLeft(cibusLoginCookies);
+    const { workDaysLeft: numberOfWorkDaysLeft, includingToday } = await getNumberOfWorkDaysLeft(cibusLoginCookies);
 
     console.clear();
 
@@ -208,7 +221,7 @@ while (true) {
       const formattedAmountLeftPerDay = numberToMoneyString(amountLeftPerDay);
       console.log(`Amount left in Cibus per working day until the end of the month: \n\n${formattedAmountLeftPerDay}`);
       console.log(`\nTotal left: ${numberToMoneyString(totalAmountLeftInCibus)}`);
-      console.log(`Work days left: ${numberOfWorkDaysLeft}`);
+      console.log(`Work days left: ${numberOfWorkDaysLeft} (${includingToday ? "including today" : "excluding today"})`);
     }
 
     if (!shouldWatch) process.exit(0);
